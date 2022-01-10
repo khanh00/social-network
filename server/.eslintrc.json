@@ -3,10 +3,19 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["airbnb-base", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "airbnb-base",
+    "plugin:import/recommended",
+    "plugin:security/recommended",
+    "prettier"
+  ],
   "parserOptions": {
     "ecmaVersion": 2021,
     "sourceType": "module"
   },
-  "rules": {}
+  "plugins": ["import", "security"],
+  "rules": {
+    "no-underscore-dangle": 0
+  }
 }
