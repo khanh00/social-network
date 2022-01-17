@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
 import routes from './routes';
-import { handleError } from './middleware';
+import { handleError, cors } from './middleware';
 import { httpStatus } from './constants';
 import { sendJsonRes } from './utils';
 
@@ -18,6 +18,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors);
 app.use('/api', routes);
 
 app.all('*', (req, res) => {
