@@ -4,7 +4,7 @@ import { AppError } from '../utils';
 const validate = (obj) => (req, _, next) => {
   let errorMessage = '';
 
-  obj.keys.forEach((schema) => {
+  Object.values(obj).forEach((schema) => {
     const { error } = schema.validate(req[`${schema}`]);
 
     if (error) {
