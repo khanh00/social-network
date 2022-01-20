@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../../styles/helpers.scss';
 
 .wrapper {
   position: sticky;
@@ -9,7 +9,7 @@
 
   background: $color-white;
   box-shadow: $box-shadow;
-  z-index: $z-index-header-wrapper;
+  z-index: $z-index-header;
 }
 
 .content {
