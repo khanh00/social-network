@@ -1,0 +1,42 @@
+@import '../../../styles/variables';
+
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 2rem 0 1rem;
+
+  border-radius: 50%;
+  background: linear-gradient(160deg, $color-primary-light, $color-primary 60%);
+  color: rgba($color: $color-white, $alpha: 0.9);
+  font-family: $font-family-logo, cursive;
+  font-size: 3.6rem;
+  user-select: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    display: block;
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  &::before {
+    left: 3.4rem;
+    width: 60%;
+    height: 60%;
+    background: $color-secondary;
+  }
+
+  &::after {
+    left: -1rem;
+    width: 40%;
+    height: 40%;
+    background: $color-tertiary;
+  }
+}
