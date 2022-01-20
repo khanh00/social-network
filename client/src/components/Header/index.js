@@ -1,7 +1,7 @@
 import React from 'react';
 
-import User from '../User';
-import Notification from '../Notifications';
+import User from './User';
+import Notification from './Notifications';
 import Search from '../Search';
 import Logo from '../ui/Logo';
 import Button from '../ui/Button';

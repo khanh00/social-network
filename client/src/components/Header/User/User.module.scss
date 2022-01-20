@@ -1,0 +1,35 @@
+@import '../../../styles/helpers.scss';
+
+.wrapper {
+  position: relative;
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+  background: $color-white;
+  color: $color-grey-100;
+}
+
+.actionUser {
+  position: absolute;
+  top: 5rem;
+  right: 0;
+
+  width: 20rem;
+  padding: 0.6rem 0;
+
+  background: $color-white;
+  border-radius: 1rem;
+  z-index: $z-index-user;
+  box-shadow: $box-shadow;
+
+  hr {
+    border: 0;
+    border-top: 1px solid $color-grey-90;
+    margin: 0.6rem 0;
+  }
+}
+
+.hidden {
+  display: none;
+}
