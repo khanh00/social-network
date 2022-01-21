@@ -6,12 +6,13 @@ import { catchAsync, AppError, sendJsonRes, authUtil } from '../utils';
 import { userService } from '../services';
 
 const { OK, CREATED, UNAUTHORIZED } = httpStatus;
+const { signToken, setCookieToken, clearCookieToken } = authUtil;
 
 const signup = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
-  const token = authUtil.signToken({ id: user._id });
+  const token = signToken({ id: user._id });
 
-  authUtil.setCookieToken(res, token);
+  setCookieToken(res, token);
   sendJsonRes(res, CREATED, { token, user });
 });
 
@@ -20,19 +21,18 @@ const login = catchAsync(async (req, res, next) => {
   const user = await userService.getUser({ email });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return next(
-      new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác')
-    );
+    return next(new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác'));
   }
 
-  const token = authUtil.signToken({ id: user._id });
+  const token = signToken({ id: user._id });
 
-  authUtil.setCookieToken(res, token);
+  setCookieToken(res, token);
   return sendJsonRes(res, OK, { token, user });
 });
 
 const logout = catchAsync((_, res) => {
-  sendJsonRes(res, OK).clearCookie('token');
+  clearCookieToken(res);
+  sendJsonRes(res, OK);
 });
 
 const checkIfLogin = catchAsync(async (req, _, next) => {

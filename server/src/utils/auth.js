@@ -14,4 +14,8 @@ const setCookieToken = (res, token) => {
   });
 };
 
-export default { signToken, setCookieToken };
+const clearCookieToken = (res) => {
+  res.clearCookie('token', { httpOnly: true });
+};
+
+export default { signToken, setCookieToken, clearCookieToken };
