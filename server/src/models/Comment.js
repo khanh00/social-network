@@ -13,7 +13,7 @@ const commentSchema = Schema({
   },
   comment: {
     type: String,
-    require: true,
+    required: true,
   },
 });
 

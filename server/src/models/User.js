@@ -10,7 +10,7 @@ const userSchema = Schema({
   imageCover: String,
   fullName: {
     type: String,
-    require: true,
+    required: true,
   },
   username: {
     type: String,
@@ -24,12 +24,12 @@ const userSchema = Schema({
     trim: true,
     lowercase: true,
     unique: true,
-    require: true,
+    required: true,
     validate: validator.email,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
     select: false,
   },
   passwordResetToken: String,
