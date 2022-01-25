@@ -3,13 +3,14 @@
 .wrapper {
   position: sticky;
   top: 0;
+  z-index: $z-index-header;
+
   width: 100%;
   height: 6rem;
   margin-bottom: 2rem;
 
   background: $color-white;
   box-shadow: $box-shadow;
-  z-index: $z-index-header;
 }
 
 .content {
@@ -29,4 +30,81 @@
 
 .left {
   margin-right: auto;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+
+  border-radius: 50%;
+  border: 1px solid $color-grey-90;
+  color: $color-grey-60;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.1s;
+
+  &:hover {
+    border: 1px solid $color-grey-60;
+  }
+}
+
+// Notification
+.notif {
+  position: relative;
+  border: 0;
+  background: transparent;
+}
+
+.notifList {
+  position: absolute;
+  top: 5rem;
+  right: 0;
+
+  width: 20rem;
+  padding: 0.6rem 0;
+
+  background: $color-white;
+  border-radius: 1rem;
+  z-index: $z-index-user;
+  box-shadow: $box-shadow;
+
+  li {
+    padding: 1rem 2rem;
+    font-size: 1.6rem;
+    color: $color-grey-30;
+  }
+}
+
+// User
+.user {
+  position: relative;
+  border: 0;
+  background: transparent;
+}
+
+.userAction {
+  position: absolute;
+  top: 5rem;
+  right: 0;
+  z-index: $z-index-user;
+
+  width: 20rem;
+  padding: 0.6rem 0;
+
+  background: $color-white;
+  border-radius: 1rem;
+  box-shadow: $box-shadow;
+
+  hr {
+    margin: 0.6rem 0;
+    border: 0;
+    border-top: 1px solid $color-grey-90;
+  }
+}
+
+.hidden {
+  display: none;
 }
