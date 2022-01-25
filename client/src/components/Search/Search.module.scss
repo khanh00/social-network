@@ -1,0 +1,46 @@
+@import '../../styles/helpers.scss';
+
+.wrapper {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  height: 4rem;
+  padding: 0 5.4rem 0 2rem;
+
+  font-size: 1.6rem;
+  color: $color-grey-30;
+  outline: none;
+  border-radius: 10rem;
+  border: 1px solid $color-grey-90;
+  background: $color-grey-110;
+
+  &:hover {
+    border: 1px solid $color-grey-60;
+  }
+
+  &:focus {
+    border: 2px solid $color-primary;
+    background: $color-white;
+  }
+}
+
+.button {
+  position: absolute;
+  inset: 0 0 auto auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 5rem;
+  height: 4rem;
+  padding-right: 2rem;
+
+  background: transparent;
+  font-size: 2.4rem;
+  border: 0;
+  color: $color-grey-60;
+  border-radius: 0 10rem 10rem 0;
+  outline: none;
+}
