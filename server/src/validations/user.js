@@ -1,14 +1,17 @@
 import Joi from 'joi';
+import { customValidation } from '../utils';
+
+const { objectId } = customValidation;
 
 const getUser = {
   params: Joi.object().keys({
-    id: Joi.string().required(),
+    id: Joi.string().custom(objectId).required(),
   }),
 };
 
 const updateUser = {
   params: Joi.object().keys({
-    id: Joi.string().required(),
+    id: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
     avatar: Joi.string(),
@@ -22,7 +25,7 @@ const updateUser = {
 
 const deleteUser = {
   params: Joi.object().keys({
-    id: Joi.string().required(),
+    id: Joi.string().custom(objectId).required(),
   }),
 };
 
