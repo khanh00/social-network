@@ -1,0 +1,66 @@
+@import '../../styles/helpers.scss';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  width: 45rem;
+  min-width: 37rem;
+  padding: 6rem 4rem;
+
+  border: 1px solid $color-grey-90;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 0 0 $color-white, 0 16.6rem 1rem -16rem $color-primary,
+    13rem 16.6rem 1rem -16rem $color-secondary,
+    -13rem 16.6rem 1rem -16rem $color-tertiary;
+  color: $color-grey-30;
+  font-size: 1.6rem;
+  transition: all 0.2s;
+
+  a {
+    text-decoration: none;
+    color: $color-primary;
+  }
+
+  > :last-child {
+    margin-top: 4rem;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.6rem;
+  width: 100%;
+}
+
+.heading {
+  font-size: 3.2rem;
+  color: $color-grey-20;
+  margin-bottom: 1rem;
+}
+
+.forgotPassword {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 1.4rem;
+}
+
+.error {
+  margin-top: -1rem;
+  color: $color-secondary;
+  font-size: 1.4rem;
+  font-weight: 500;
+  text-align: center;
+}
