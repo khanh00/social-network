@@ -2,19 +2,16 @@ import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
-const commentSchema = Schema({
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+const commentSchema = Schema(
+  {
+    text: String,
+    image: String,
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    post: { type: Schema.Types.ObjectId, ref: 'Post' },
   },
-  post: {
-    type: Schema.Types.ObjectId,
-    ref: 'Post',
-  },
-  comment: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 export default model('Comment', commentSchema);

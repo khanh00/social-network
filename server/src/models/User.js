@@ -1,39 +1,25 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-import { validator } from '../constants';
-
 const { Schema, model } = mongoose;
 
-const userSchema = Schema({
-  avatar: String,
-  imageCover: String,
-  fullName: {
-    type: String,
-    required: true,
+const userSchema = Schema(
+  {
+    avatar: String,
+    imageCover: String,
+    fullName: String,
+    email: { type: String, unique: true },
+    username: { type: String, unique: true },
+    password: { type: String, select: false },
+    passwordResetToken: String,
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
   },
-  username: {
-    type: String,
-    lowercase: true,
-    trim: true,
-    unique: true,
-    // sparse: true,
-  },
-  email: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    unique: true,
-    required: true,
-    validate: validator.email,
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  passwordResetToken: String,
-});
+  {
+    timestamps: true,
+  }
+);
 
 userSchema.pre('save', async function preHook(next) {
   if (!this.username) {
