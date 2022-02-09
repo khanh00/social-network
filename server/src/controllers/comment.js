@@ -1,35 +1,54 @@
+import { Comment, User, Post } from '../models';
 import { httpStatus } from '../constants';
-import { Comment } from '../models';
-import { sendJsonRes } from '../utils';
+import { catchAsync, sendJsonRes } from '../utils';
 
 const { OK, CREATED, NO_CONTENT } = httpStatus;
 
-const getComments = async (_, res) => {
-  const comments = await Comment.find();
-  sendJsonRes(res, OK, comments);
-};
+const getComments = catchAsync(async (req, res) => {
+  const comments = await Comment.find(req.query)
+    .populate('author', 'avatar fullName')
+    .exec();
+  sendJsonRes(res, OK, { comments });
+});
 
-const getComment = async (req, res) => {
-  const comment = await Comment.findById(req.params.id);
-  sendJsonRes(res, OK, comment);
-};
+const getComment = catchAsync(async (req, res) => {
+  const comment = await Comment.findOne({ _id: req.params.id });
+  sendJsonRes(res, OK, { comment });
+});
 
-const createComment = async (req, res) => {
-  const newComment = await Comment.create(req.body);
-  sendJsonRes(res, CREATED, newComment);
-};
+const createComment = catchAsync(async (req, res) => {
+  const { text, author, post } = req.body;
+  const newComment = await Comment.create({ text, author, post });
 
-const updateComment = async (req, res) => {
-  const comment = Comment.findByIdAndUpdate(req.params.id, req.body, {
-    runValidators: true,
+  await User.findByIdAndUpdate(author, {
+    $push: { comments: newComment._id },
+  }).exec();
+  await Post.findByIdAndUpdate(post, {
+    $push: { comments: newComment._id },
+  }).exec();
+
+  sendJsonRes(res, CREATED, { comment: newComment });
+});
+
+const updateComment = catchAsync(async (req, res) => {
+  const comment = await Comment.findByIdAndUpdate(req.params.id, req.body);
+  sendJsonRes(res, OK, { comment });
+});
+
+const deleteComment = catchAsync(async (req, res) => {
+  const { _id, author, post } = await Comment.findByIdAndDelete(
+    req.params.id
+  ).exec();
+
+  await User.findByIdAndUpdate(author, {
+    $pull: { comments: _id },
   });
-  sendJsonRes(res, OK, comment);
-};
+  await Post.findByIdAndUpdate(post, {
+    $pull: { comments: _id },
+  });
 
-const deleteComment = async (req, res) => {
-  await Comment.findByIdAndDelete(req.params.id);
   sendJsonRes(res, NO_CONTENT, null);
-};
+});
 
 export default {
   getComments,

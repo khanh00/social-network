@@ -2,14 +2,20 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { httpStatus } from '../constants';
-import { catchAsync, AppError, sendJsonRes, authUtil } from '../utils';
-import { userService } from '../services';
+import { catchAsync, AppError, sendJsonRes, tokenUtil } from '../utils';
+import { User } from '../models';
 
 const { OK, CREATED, UNAUTHORIZED } = httpStatus;
-const { signToken, setCookieToken, clearCookieToken } = authUtil;
+const { signToken, setCookieToken, clearCookieToken } = tokenUtil;
 
 const signup = catchAsync(async (req, res) => {
-  const user = await userService.createUser(req.body);
+  const { fullName, username, email, password } = req.body;
+  const user = await User.create({
+    fullName,
+    username,
+    email,
+    password,
+  });
   const token = signToken({ id: user._id });
 
   setCookieToken(res, token);
@@ -18,10 +24,12 @@ const signup = catchAsync(async (req, res) => {
 
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await userService.getUser({ email });
+  const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return next(new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác'));
+    return next(
+      new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác')
+    );
   }
 
   const token = signToken({ id: user._id });
@@ -35,7 +43,7 @@ const logout = catchAsync((_, res) => {
   sendJsonRes(res, OK);
 });
 
-const checkIfLogin = catchAsync(async (req, _, next) => {
+const checkIfLoggedIn = catchAsync(async (req, _, next) => {
   const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
   const { token } = req.cookies;
 
@@ -44,13 +52,12 @@ const checkIfLogin = catchAsync(async (req, _, next) => {
   }
 
   const { id } = jwt.verify(token, JWT_SECRET, { maxAge: JWT_EXPIRES_IN });
-  const user = userService.getUser(id);
+  const user = await User.findOne({ _id: id });
 
   if (!user) {
-    return next(new AppError(UNAUTHORIZED, 'Phiên đăng nhập đã hết hạng'));
+    return next(new AppError(UNAUTHORIZED, 'Phiên đăng nhập đã hết hạn'));
   }
-
   return next();
 });
 
-export default { signup, login, logout, checkIfLogin };
+export default { signup, login, logout, checkIfLoggedIn };

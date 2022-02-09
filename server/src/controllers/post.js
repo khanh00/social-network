@@ -1,34 +1,39 @@
 import { httpStatus } from '../constants';
 import { Post } from '../models';
-import { sendJsonRes } from '../utils';
+import { catchAsync, sendJsonRes } from '../utils';
 
 const { OK, CREATED, NO_CONTENT } = httpStatus;
 
-const getPosts = async (_, res) => {
-  const posts = await Post.find();
-  sendJsonRes(res, OK, posts);
-};
+const getPosts = catchAsync(async (req, res) => {
+  const posts = await Post.find()
+    .sort('-createdAt')
+    .select('-__v')
+    .populate('author', 'avatar fullName -_id')
+    .populate('likes', '-post -__v');
+  sendJsonRes(res, OK, { posts });
+});
 
-const getPost = async (req, res) => {
+const getPost = catchAsync(async (req, res) => {
   const post = await Post.findById(req.params.id);
   sendJsonRes(res, OK, post);
-};
+});
 
-const createPost = async (req, res) => {
-  const newPost = await Post.create(req.body);
-  sendJsonRes(res, CREATED, newPost);
-};
+const createPost = catchAsync(async (req, res) => {
+  const { text, images, author } = req.body;
+  const newPost = await Post.create({ text, images, author });
+  sendJsonRes(res, CREATED, { post: newPost });
+});
 
-const updatePost = async (req, res) => {
+const updatePost = catchAsync(async (req, res) => {
   const post = Post.findByIdAndUpdate(req.params.id, req.body, {
     runValidators: true,
-  });
-  sendJsonRes(res, CREATED, post);
-};
+  }).exec();
+  sendJsonRes(res, CREATED, { post });
+});
 
-const deletePost = async (req, res) => {
+const deletePost = catchAsync(async (req, res) => {
   await Post.findByIdAndDelete(req.params.id);
   sendJsonRes(res, NO_CONTENT, null);
-};
+});
 
 export default { getPosts, getPost, createPost, updatePost, deletePost };
