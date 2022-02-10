@@ -11,6 +11,10 @@
 
   background: $color-white;
   box-shadow: $box-shadow;
+
+  button {
+    border: 0;
+  }
 }
 
 .content {

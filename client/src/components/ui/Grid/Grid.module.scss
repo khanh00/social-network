@@ -1,0 +1,15 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+  max-width: 128rem;
+  margin: 0 auto;
+}
+
+@for $from from 1 to 14 {
+  @for $to from 1 to 14 {
+    .column-#{$from}-#{$to} {
+      grid-column: #{$from}/#{$to};
+    }
+  }
+}
