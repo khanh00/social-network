@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export const httpStatus = {
   OK: 200,
   CREATED: 201,
@@ -6,8 +7,4 @@ export const httpStatus = {
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
-};
-
-export const validator = {
-  email: /^\S+@\S+\.\S+$/,
 };
