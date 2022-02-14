@@ -1,0 +1,71 @@
+@import '../../styles/helpers.scss';
+
+.wrapper {
+  display: flex;
+  gap: 1.6rem;
+  width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: 1.6rem;
+  }
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+
+  border-radius: 50%;
+  border: 1px solid $color-grey-90;
+  overflow: hidden;
+  cursor: pointer;
+
+  img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+  }
+}
+
+.right {
+  width: 100%;
+}
+
+.comment {
+  padding: 1rem;
+  margin-bottom: 0.4rem;
+
+  background: $color-grey-110;
+  border: 1px solid $color-grey-100;
+  border-radius: 1rem;
+}
+
+.fullName {
+  display: inline-block;
+  margin-bottom: 0.2rem;
+
+  font-weight: 500;
+  font-size: 1.2rem;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+
+.action {
+  display: flex;
+  gap: 0.6rem;
+
+  color: $color-grey-50;
+  font-size: 1.2rem;
+
+  > :not(:last-child) {
+    font-weight: 500;
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}
