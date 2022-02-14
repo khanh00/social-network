@@ -10,28 +10,19 @@ import { AiFillLike, AiOutlineLike, AiTwotoneLike } from 'react-icons/ai';
 import style from './Post.module.scss';
 import Comments from './Comments';
 import Hr from '../ui/Hr';
-import { displayTime } from '../../utils';
 import * as api from '../../api';
-import { useAuth } from '../../contexts/authContext';
 import CommentCreate from '../CommentCreate';
+import { displayTime } from '../../utils';
+import { useAuth } from '../../contexts/authContext';
 
 function Post({
   post: { _id, text, images, createdAt, updatedAt, author, comments, likes },
 }) {
   const [isDisplayComments, setIsDisplayComments] = useState(false);
-  const auth = useAuth();
   const [likeId, setLikeId] = useState(null);
   const [liked, setLiked] = useState(false);
-  const [numberOfLike, setNumberOfLiked] = useState(likes.length);
-
-  useEffect(() => {
-    (async () => {
-      const user = await auth.user;
-      const like = likes.find((like) => like.author === user._id);
-      if (like) setLikeId(like._id);
-      setLiked(!!like);
-    })();
-  }, [auth.user, likes]);
+  const [numberOfLikes, setNumberOfLikes] = useState(likes.length);
+  const auth = useAuth();
 
   const handleLike = async () => {
     if (liked) {
@@ -40,29 +31,30 @@ function Post({
       if (error) return console.log(error.message);
 
       setLiked(false);
-      setNumberOfLiked((prev) => prev - 1);
+      setNumberOfLikes((prev) => prev - 1);
     }
 
     if (!liked) {
-      const author = await auth.user;
       const { data, error } = await api.createLike({
         type: 'like',
         post: _id,
-        author: author._id,
       });
 
       if (error) return console.log(error.message);
 
       setLikeId(data._id);
       setLiked(true);
-      setNumberOfLiked((prev) => prev + 1);
+      setNumberOfLikes((prev) => prev + 1);
     }
   };
 
-  const handleComment = () => {
-    setIsDisplayComments(true);
-    document.querySelector('#comment').focus();
-  };
+  useEffect(() => {
+    const like = likes.find((like) => like.author === auth.currentUser);
+    if (like) {
+      setLikeId(like._id);
+      setLiked(true);
+    }
+  }, [auth.currentUser, likes]);
 
   return (
     <li className={style.wrapper}>
@@ -100,7 +92,7 @@ function Post({
             <div className={style.statusIcon}>
               <AiTwotoneLike />
             </div>
-            {numberOfLike}
+            {numberOfLikes}
           </div>
 
           <button
@@ -127,7 +119,7 @@ function Post({
           <div>Thích</div>
         </button>
 
-        <button onClick={handleComment}>
+        <button>
           <div className={style.actionIcon}>
             <IoChatbubbleEllipsesOutline />
           </div>
@@ -146,7 +138,7 @@ function Post({
 
       {isDisplayComments && (
         <>
-          <CommentCreate />
+          <CommentCreate postId={_id} />
           <Comments postId={_id} />
         </>
       )}

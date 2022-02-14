@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 
+import * as api from '../../api';
+import { useAuth } from '../../contexts/authContext';
 import Logo from '../../components/ui/Logo';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import style from './Login.module.scss';
-import * as api from '../../api';
 
 function Login() {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [input, setInput] = useState({ email: '', password: '' });
   const [isCheck, setIsCheck] = useState(false);
   const [inputIsValid, setInputIsValid] = useState(false);
   const [error, setError] = useState();
+  const auth = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsCheck(true);
-    if (inputIsValid) {
-      try {
-        await api.login({ email, password });
-        document.location.href = '/';
-      } catch (error) {
-        setError(error.response.data.data.message);
-      }
-    }
+    if (!inputIsValid) return;
+
+    const { data, error } = await api.login(input);
+    if (error) return setError(error.message);
+
+    auth.login(data.user._id);
+    document.location.href = '/';
   };
 
   return (
@@ -37,7 +37,7 @@ function Login() {
             placeholder="khanh@gmail.com"
             isCheck={isCheck}
             checkValue={(isValid) => setInputIsValid(isValid)}
-            onChangeValue={(value) => setEmail(value)}
+            onChangeValue={(value) => setInput({ ...input, email: value })}
           />
           <div className="p-relative">
             <Input
@@ -45,7 +45,7 @@ function Login() {
               placeholder="••••••••"
               isCheck={isCheck}
               checkValue={(isValid) => setInputIsValid(isValid)}
-              onChangeValue={(value) => setPassword(value)}
+              onChangeValue={(value) => setInput({ ...input, password: value })}
             />
             <a className={style.forgotPassword} href="/login">
               Quên mật khẩu?
