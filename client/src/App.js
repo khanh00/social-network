@@ -1,15 +1,26 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { Home } from './pages';
+import RequireAuth from './components/RequireAuth';
+import { Home, Login } from './pages';
+import { AuthProvider } from './contexts/authContext';
+import { SocketProvider } from './contexts/socketContext';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <SocketProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+
+            <Route element={<RequireAuth />}>
+              <Route path="/" element={<Home />} />
+            </Route>
+          </Routes>
+        </Router>
+      </SocketProvider>
+    </AuthProvider>
   );
 }
 
