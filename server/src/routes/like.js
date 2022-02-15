@@ -1,8 +1,10 @@
 import { Router } from 'express';
 
-import { likeController } from '../controllers';
+import { authController, likeController } from '../controllers';
 
 const router = Router();
+
+router.use(authController.checkIfLoggedIn);
 
 router.get('/', likeController.getLikes);
 router.post('/', likeController.createLike);
