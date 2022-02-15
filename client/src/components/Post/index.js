@@ -14,6 +14,7 @@ import * as api from '../../api';
 import CommentCreate from '../CommentCreate';
 import { displayTime } from '../../utils';
 import { useAuth } from '../../contexts/authContext';
+import { useSocket } from '../../contexts/socketContext';
 
 function Post({
   post: { _id, text, images, createdAt, updatedAt, author, comments, likes },
@@ -22,7 +23,9 @@ function Post({
   const [likeId, setLikeId] = useState(null);
   const [liked, setLiked] = useState(false);
   const [numberOfLikes, setNumberOfLikes] = useState(likes.length);
+  const [numberOfComments, setNumberOfComments] = useState(comments.length);
   const auth = useAuth();
+  const socket = useSocket();
 
   const handleLike = async () => {
     if (liked) {
@@ -55,6 +58,15 @@ function Post({
       setLiked(true);
     }
   }, [auth.currentUser, likes]);
+
+  useEffect(() => {
+    socket.on('changed number comments', (number) => {
+      setNumberOfComments(number);
+    });
+    return () => {
+      socket.off('changed number comments');
+    };
+  }, [socket]);
 
   return (
     <li className={style.wrapper}>
@@ -99,7 +111,7 @@ function Post({
             className={style.statusComment}
             onClick={() => setIsDisplayComments(!isDisplayComments)}
           >
-            {comments.length} bình luận
+            {numberOfComments} bình luận
           </button>
         </div>
       </div>

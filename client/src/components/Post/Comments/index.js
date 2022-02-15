@@ -4,17 +4,28 @@ import PropTypes from 'prop-types';
 import * as api from '../../../api';
 import Comment from '../../Comment';
 import style from './Comments.module.scss';
+import { useSocket } from '../../../contexts/socketContext';
 
 function Comments({ postId }) {
   const [comments, setComments] = useState([]);
+  const socket = useSocket();
 
   useEffect(() => {
     (async () => {
       const { data, error } = await api.getComments(`post=${postId}`);
-      if (error) console.log(error.message);
+      if (error) return console.log(error.message);
       setComments(data.comments);
     })();
   }, [postId]);
+
+  useEffect(() => {
+    socket.on('changed comments', (comments) => {
+      setComments(comments);
+    });
+    return () => {
+      socket.off('changed comments');
+    };
+  }, [socket, comments]);
 
   return (
     comments.length > 0 && (
