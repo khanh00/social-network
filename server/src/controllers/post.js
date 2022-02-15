@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { httpStatus } from '../constants';
 import { Post } from '../models';
 import { catchAsync, sendJsonRes } from '../utils';
@@ -19,7 +20,8 @@ const getPost = catchAsync(async (req, res) => {
 });
 
 const createPost = catchAsync(async (req, res) => {
-  const { text, images, author } = req.body;
+  const { id: author } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+  const { text, images } = req.body;
   const newPost = await Post.create({ text, images, author });
   sendJsonRes(res, CREATED, { post: newPost });
 });
