@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AiOutlineSend } from 'react-icons/ai';
 
@@ -11,19 +11,27 @@ function CommentCreate({ postId }) {
   const [text, setText] = useState('');
   const socket = useSocket();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (text.trim() === '') return;
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      if (text.trim() === '') return;
 
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('post', postId);
+      const formData = new FormData();
+      formData.append('text', text);
+      formData.append('post', postId);
 
-    const { data, error } = await api.createComment(formData);
-    if (error) console.log(error.message);
-    setText('');
-    socket.emit('create comment', data.comment);
-  };
+      const { error: errorCreateComment } = await api.createComment(formData);
+      if (errorCreateComment) return console.log(errorCreateComment.message);
+      const { data, error: errorGetComments } = await api.getComments(
+        `post=${postId}`
+      );
+      if (errorGetComments) return console.log(errorGetComments.message);
+
+      setText('');
+      socket.emit('create comment', data.comments);
+    },
+    [postId, socket, text]
+  );
 
   return (
     <form className={style.wrapper} onSubmit={handleSubmit}>

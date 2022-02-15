@@ -12,6 +12,11 @@ const createSocket = (httpServer) => {
   io.on('connection', (socket) => {
     console.log(`connect: ${socket.id}`);
 
+    socket.on('create comment', (comments) => {
+      socket.emit('changed comments', comments);
+      socket.emit('changed number comments', comments.length);
+    });
+
     socket.on('disconnect', () => {
       console.log(`disconnect: ${socket.id}`);
     });
