@@ -1,11 +1,14 @@
 import { Router } from 'express';
 
-import { commentController } from '../controllers';
+import { authController, commentController } from '../controllers';
+import { uploadImages } from '../middleware';
 
 const router = Router();
 
+router.use(authController.checkIfLoggedIn);
+
 router.get('/', commentController.getComments);
-router.post('/', commentController.createComment);
+router.post('/', uploadImages, commentController.createComment);
 
 router.get('/:id', commentController.getComment);
 router.patch('/:id', commentController.updateComment);
