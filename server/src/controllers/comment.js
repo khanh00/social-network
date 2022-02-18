@@ -6,9 +6,10 @@ import { catchAsync, sendJsonRes } from '../utils';
 const { OK, CREATED, NO_CONTENT } = httpStatus;
 
 const getComments = catchAsync(async (req, res) => {
-  const comments = await Comment.find(req.query)
-    .sort('-createdAt')
-    .select('-__v')
+  const { filter, sort, select } = req.query;
+  const comments = await Comment.find(filter)
+    .sort(sort)
+    .select(select)
     .populate('author', 'avatar fullName -_id')
     .exec();
   sendJsonRes(res, OK, { comments });

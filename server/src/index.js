@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 
 import routes from './routes';
-import { handleError } from './middleware';
+import { apiQueryParams, handleError } from './middleware';
 import { httpStatus } from './constants';
 import { sendJsonRes } from './utils';
 import socket from './socket';
@@ -34,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors(corsOptions));
+app.use(apiQueryParams);
 app.use('/api', routes);
 app.all('*', (req, res) => {
   sendJsonRes(res, httpStatus.NOT_FOUND, {
