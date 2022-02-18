@@ -6,7 +6,7 @@ import { catchAsync, sendJsonRes } from '../utils';
 const { OK, NO_CONTENT } = httpStatus;
 
 const getUsers = catchAsync(async (req, res) => {
-  const users = await User.find().exec();
+  const users = await User.find(req.query.filter).exec();
   sendJsonRes(res, OK, { users });
 });
 

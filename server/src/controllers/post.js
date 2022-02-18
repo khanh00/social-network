@@ -6,9 +6,10 @@ import { catchAsync, sendJsonRes } from '../utils';
 const { OK, CREATED, NO_CONTENT } = httpStatus;
 
 const getPosts = catchAsync(async (req, res) => {
-  const posts = await Post.find()
-    .sort('-createdAt')
-    .select('-__v')
+  const { filter, sort, select } = req.query;
+  const posts = await Post.find(filter)
+    .sort(sort)
+    .select(select)
     .populate('author', 'avatar fullName -_id')
     .populate('likes', '-post -__v');
   sendJsonRes(res, OK, { posts });

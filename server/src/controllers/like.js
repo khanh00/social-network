@@ -5,8 +5,8 @@ import { sendJsonRes } from '../utils';
 
 const { OK, CREATED, NO_CONTENT } = httpStatus;
 
-const getLikes = async (_, res) => {
-  const likes = await Like.find();
+const getLikes = async (req, res) => {
+  const likes = await Like.find(req.query.filter);
   sendJsonRes(res, OK, { likes });
 };
 
