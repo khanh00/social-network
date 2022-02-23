@@ -6,7 +6,6 @@ import Navigation from '../../components/Navigation';
 import OnlineRecently from '../../components/OnlineRecently';
 import Post from '../../components/Post';
 import Grid from '../../components/ui/Grid';
-import style from './Home.module.scss';
 
 function Home() {
   const [posts, setPosts] = useState();
@@ -21,7 +20,7 @@ function Home() {
   }, []);
 
   return (
-    <div className={style.wrapper}>
+    <>
       <Header />
       <Grid.Container>
         <Grid.Item column="1-3">
@@ -30,13 +29,10 @@ function Home() {
 
         <Grid.Item column="3-10">
           <main>
-            {posts && (
-              <ul>
-                {posts.map((post) => (
-                  <Post key={post._id} post={post} />
-                ))}
-              </ul>
-            )}
+            <ul>
+              {posts &&
+                posts.map((post) => <Post key={post._id} post={post} />)}
+            </ul>
           </main>
         </Grid.Item>
 
@@ -44,7 +40,7 @@ function Home() {
           <OnlineRecently />
         </Grid.Item>
       </Grid.Container>
-    </div>
+    </>
   );
 }
 

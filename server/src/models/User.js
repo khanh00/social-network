@@ -15,6 +15,7 @@ const userSchema = Schema(
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
     likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
+    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,

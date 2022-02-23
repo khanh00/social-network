@@ -12,6 +12,12 @@ export const login = catchAsync((data) => instance.post('/auth/login', data));
 
 // User
 export const getCurrentUser = catchAsync(() => instance.get('/users/me'));
+export const getUsers = catchAsync((queryString) =>
+  instance.get(`/users?${queryString}`)
+);
+export const updateUser = catchAsync((id, data) =>
+  instance.patch(`/users/${id}`, data)
+);
 
 // Post
 export const getPosts = catchAsync(() => instance.get('/posts'));
