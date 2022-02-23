@@ -20,6 +20,9 @@ const updateUser = {
     username: Joi.string(),
     email: Joi.string().email(),
     password: Joi.string().min(8),
+    friends: Joi.string().custom(objectId),
+    $push: Joi.object(),
+    $pull: Joi.object(),
   }),
 };
 

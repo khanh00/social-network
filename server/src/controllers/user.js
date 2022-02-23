@@ -19,11 +19,15 @@ const getUser = catchAsync(async (req, res) => {
 
 const getCurrentUser = catchAsync(async (req, res) => {
   const { id } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-  sendJsonRes(res, OK, { user: { _id: id } });
+  const user = await User.findOne({ _id: id });
+  sendJsonRes(res, OK, { user });
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body).exec();
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  }).exec();
   sendJsonRes(res, OK, { user });
 });
 

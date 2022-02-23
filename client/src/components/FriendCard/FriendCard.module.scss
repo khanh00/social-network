@@ -1,0 +1,49 @@
+@import '../../styles/helpers.scss';
+
+.wrapper {
+  display: grid;
+  grid-template-rows: 50% 25% 25%;
+  justify-items: center;
+  padding: 1.6rem;
+  border-radius: 4px;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+}
+
+.avatar {
+  width: 12rem;
+  height: 12rem;
+
+  img {
+    object-fit: cover;
+    border-radius: 50%;
+    height: 100%;
+  }
+}
+
+.fullName {
+  margin-top: 1rem;
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: $color-grey-30;
+}
+
+.buttonAddFriend,
+.buttonUnFriend {
+  font-weight: 500;
+  background: transparent;
+  width: 60%;
+  height: 3.6rem;
+  align-self: flex-end;
+  border-radius: 10rem;
+  cursor: pointer;
+}
+
+.buttonAddFriend {
+  color: $color-primary;
+  border: 1px solid $color-primary;
+}
+.buttonUnFriend {
+  color: $color-grey-30;
+  border: 1px solid $color-grey-30;
+}
