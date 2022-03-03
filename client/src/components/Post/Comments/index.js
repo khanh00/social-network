@@ -19,11 +19,11 @@ function Comments({ postId }) {
   }, [postId]);
 
   useEffect(() => {
-    socket.on('changed comments', (comments) => {
+    socket.on('change comments', (comments) => {
       setComments(comments);
     });
     return () => {
-      socket.off('changed comments');
+      socket.off('change comments');
     };
   }, [socket, comments]);
 

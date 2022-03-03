@@ -60,11 +60,11 @@ function Post({
   }, [auth.currentUser, likes]);
 
   useEffect(() => {
-    socket.on('changed number comments', (number) => {
+    socket.on('change number comments', (number) => {
       setNumberOfComments(number);
     });
     return () => {
-      socket.off('changed number comments');
+      socket.off('change number comments');
     };
   }, [socket]);
 

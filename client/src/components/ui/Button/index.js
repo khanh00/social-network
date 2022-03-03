@@ -12,7 +12,11 @@ const Button = {
     );
   },
   Submit: function ({ children }) {
-    return <button className={style.submit}>{children}</button>;
+    return (
+      <button formNoValidate className={style.submit}>
+        {children}
+      </button>
+    );
   },
 };
 

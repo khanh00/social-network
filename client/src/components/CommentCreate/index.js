@@ -22,13 +22,14 @@ function CommentCreate({ postId }) {
 
       const { error: errorCreateComment } = await api.createComment(formData);
       if (errorCreateComment) return console.log(errorCreateComment.message);
-      const { data, error: errorGetComments } = await api.getComments(
-        `post=${postId}`
-      );
-      if (errorGetComments) return console.log(errorGetComments.message);
-
       setText('');
-      socket.emit('create comment', data.comments);
+
+      const {
+        data: { comments },
+        error: errorGetComments,
+      } = await api.getComments(`post=${postId}`);
+      if (errorGetComments) return console.log(errorGetComments.message);
+      socket.emit('create comment', comments);
     },
     [postId, socket, text]
   );

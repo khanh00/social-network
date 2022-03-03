@@ -11,7 +11,7 @@ function FriendCard({ user }) {
   useEffect(() => {
     (async () => {
       const { data, error } = await api.getCurrentUser();
-      if (error) console.log(error);
+      if (error) return console.log(error);
       const { friends } = data.user;
       setIsFriend(friends.some((userId) => userId === user._id));
     })();
