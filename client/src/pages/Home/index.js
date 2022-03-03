@@ -6,9 +6,11 @@ import Navigation from '../../components/Navigation';
 import OnlineRecently from '../../components/OnlineRecently';
 import Post from '../../components/Post';
 import Grid from '../../components/ui/Grid';
+import { useSocket } from '../../contexts/socketContext';
 
 function Home() {
   const [posts, setPosts] = useState();
+  const socket = useSocket();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +20,13 @@ function Home() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    socket.on('change posts', (posts) => {
+      setPosts(posts);
+    });
+    return socket.off('change posts');
+  }, [socket]);
 
   return (
     <>

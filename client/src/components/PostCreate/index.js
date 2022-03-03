@@ -8,10 +8,12 @@ import style from './PostCreate.module.scss';
 import avatar from '../../assets/avatars/iron-man.png';
 import * as api from '../../api';
 import { useClickOutside } from '../../utils';
+import { useSocket } from '../../contexts/socketContext';
 
 function PostCreate({ setIsHidden }) {
   const [text, setText] = useState('');
   const formEl = useRef(null);
+  const socket = useSocket();
 
   useClickOutside(formEl, () => setIsHidden(true));
 
@@ -19,9 +21,17 @@ function PostCreate({ setIsHidden }) {
     event.preventDefault();
     if (text.trim() === '') return;
     const formData = new FormData(formEl.current);
-    const { error } = await api.createPost(formData);
-    if (error) return console.log(error.message);
+
+    const { error: errorCreatePost } = await api.createPost(formData);
+    if (errorCreatePost) return console.log(errorCreatePost.message);
     setIsHidden(true);
+
+    const {
+      data: { posts },
+      error: errorGetPosts,
+    } = await api.getPosts();
+    if (errorGetPosts) return console.log(errorGetPosts.message);
+    socket.emit('create post', posts);
   };
 
   return (
@@ -57,7 +67,7 @@ function PostCreate({ setIsHidden }) {
         />
 
         <button
-          className={clsx(style.button, { [style.disable]: !text.trim() })}
+          className={clsx(style.btnSubmit, { [style.disable]: !text.trim() })}
         >
           Đăng
         </button>
