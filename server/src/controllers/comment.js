@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { Comment, User, Post } from '../models';
 import { httpStatus } from '../constants';
 import { catchAsync, sendJsonRes } from '../utils';
@@ -21,8 +20,8 @@ const getComment = catchAsync(async (req, res) => {
 });
 
 const createComment = catchAsync(async (req, res) => {
-  const { id: author } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
   const { text, post } = req.body;
+  const { author } = req;
   const newComment = await Comment.create({ text, author, post });
 
   newComment.populate('author', 'avatar fullName -_id');
@@ -37,7 +36,10 @@ const createComment = catchAsync(async (req, res) => {
 });
 
 const updateComment = catchAsync(async (req, res) => {
-  const comment = await Comment.findByIdAndUpdate(req.params.id, req.body);
+  const comment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
   sendJsonRes(res, OK, { comment });
 });
 

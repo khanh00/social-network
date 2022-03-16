@@ -1,15 +1,20 @@
 import { Router } from 'express';
 
 import { authController, postController } from '../controllers';
-import { uploadImages, validate } from '../middleware';
+import { validate } from '../middleware';
 import { postValidation } from '../validations';
+import { upload } from '../utils';
 
 const router = Router();
 
 router.use(authController.checkIfLoggedIn);
 
 router.get('/', postController.getPosts);
-router.post('/', uploadImages, postController.createPost);
+router.post(
+  '/',
+  upload('image', 'images/posts').array('images'),
+  postController.createPost
+);
 
 router.get('/:id', postController.getPost);
 router.patch(

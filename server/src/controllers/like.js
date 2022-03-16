@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { httpStatus } from '../constants';
 import { Like, Post, User } from '../models';
 import { sendJsonRes } from '../utils';
@@ -16,8 +15,9 @@ const getLike = async (req, res) => {
 };
 
 const createLike = async (req, res) => {
-  const { id: author } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
   const { type, post } = req.body;
+  const { author } = req;
+
   const newLike = await Like.create({ type, author, post });
 
   await User.findByIdAndUpdate(author, {
@@ -31,10 +31,9 @@ const createLike = async (req, res) => {
 };
 
 const deleteLike = async (req, res) => {
-  const { id: author } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
   const { _id, post } = await Like.findByIdAndDelete(req.params.id).exec();
 
-  await User.findByIdAndUpdate(author, {
+  await User.findByIdAndUpdate(req.author, {
     $pull: { likes: _id },
   }).exec();
   await Post.findByIdAndUpdate(post, {
