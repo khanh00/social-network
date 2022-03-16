@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { httpStatus } from '../constants';
 import { Post } from '../models';
 import { catchAsync, sendJsonRes } from '../utils';
@@ -21,14 +20,19 @@ const getPost = catchAsync(async (req, res) => {
 });
 
 const createPost = catchAsync(async (req, res) => {
-  const { id: author } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-  const { text, images } = req.body;
+  const images = [];
+  req.files.forEach((file) => {
+    images.push(`${file.destination}/${file.filename}`);
+  });
+  const { text } = req.body;
+  const { author } = req;
   const newPost = await Post.create({ text, images, author });
   sendJsonRes(res, CREATED, { post: newPost });
 });
 
 const updatePost = catchAsync(async (req, res) => {
   const post = Post.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
     runValidators: true,
   }).exec();
   sendJsonRes(res, CREATED, { post });

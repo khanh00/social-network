@@ -51,12 +51,14 @@ const checkIfLoggedIn = catchAsync(async (req, _, next) => {
     return next(new AppError(UNAUTHORIZED, 'Đăng nhập để truy cập'));
   }
 
-  const { id } = jwt.verify(token, JWT_SECRET, { maxAge: JWT_EXPIRES_IN });
+  const { id } = jwt.verify(token, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
   const user = await User.findOne({ _id: id });
 
   if (!user) {
     return next(new AppError(UNAUTHORIZED, 'Phiên đăng nhập đã hết hạn'));
   }
+
+  req.author = id;
   return next();
 });
 

@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import { User } from '../models';
 import { httpStatus } from '../constants';
 import { catchAsync, sendJsonRes } from '../utils';
@@ -18,8 +17,7 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const getCurrentUser = catchAsync(async (req, res) => {
-  const { id } = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
-  const user = await User.findOne({ _id: id });
+  const user = await User.findOne({ _id: req.body.author });
   sendJsonRes(res, OK, { user });
 });
 
