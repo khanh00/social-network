@@ -22,7 +22,7 @@ const getPost = catchAsync(async (req, res) => {
 const createPost = catchAsync(async (req, res) => {
   const images = [];
   req.files.forEach((file) => {
-    images.push(`${file.destination}/${file.filename}`);
+    images.push(`${file.filename}`);
   });
   const { text } = req.body;
   const { author } = req;

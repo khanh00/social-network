@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import {
-  IoChatbubbleEllipsesOutline,
-  IoShareSocialOutline,
-} from 'react-icons/io5';
+import { IoChatbubbleEllipsesOutline, IoShareSocialOutline } from 'react-icons/io5';
 import { AiFillLike, AiOutlineLike, AiTwotoneLike } from 'react-icons/ai';
 
 import style from './Post.module.scss';
@@ -16,9 +13,7 @@ import { displayTime } from '../../utils';
 import { useAuth } from '../../contexts/authContext';
 import { useSocket } from '../../contexts/socketContext';
 
-function Post({
-  post: { _id, text, images, createdAt, updatedAt, author, comments, likes },
-}) {
+function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes } }) {
   const [isDisplayComments, setIsDisplayComments] = useState(false);
   const [likeId, setLikeId] = useState(null);
   const [liked, setLiked] = useState(false);
@@ -78,9 +73,7 @@ function Post({
           </div>
           <div>
             <div className={style.authorFullName}>{author.fullName}</div>
-            <div className={style.time}>
-              {displayTime(createdAt, updatedAt)}
-            </div>
+            <div className={style.time}>{displayTime(createdAt, updatedAt)}</div>
           </div>
         </div>
 
@@ -93,7 +86,7 @@ function Post({
         {images && (
           <div className={style.image}>
             {images.map((image) => (
-              <img src={image} alt="post" key={image} />
+              <img src={`${process.env.REACT_APP_SERVER}/images/post/${image}`} alt="post" key={image} />
             ))}
           </div>
         )}
@@ -107,10 +100,7 @@ function Post({
             {numberOfLikes}
           </div>
 
-          <button
-            className={style.statusComment}
-            onClick={() => setIsDisplayComments(!isDisplayComments)}
-          >
+          <button className={style.statusComment} onClick={() => setIsDisplayComments(!isDisplayComments)}>
             {numberOfComments} bình luận
           </button>
         </div>

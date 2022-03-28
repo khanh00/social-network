@@ -1,38 +1,62 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { IoCaretDown, IoCloseOutline, IoLockClosed } from 'react-icons/io5';
+import { IoCaretDown, IoCloseOutline, IoLockClosed, IoImage } from 'react-icons/io5';
 import PropTypes from 'prop-types';
 
 import Overlay from '../ui/Overlay';
 import style from './PostCreate.module.scss';
-import avatar from '../../assets/avatars/iron-man.png';
 import * as api from '../../api';
 import { useClickOutside } from '../../utils';
 import { useSocket } from '../../contexts/socketContext';
 
 function PostCreate({ setIsHidden }) {
   const [text, setText] = useState('');
+  const [images, setImages] = useState([]);
   const formEl = useRef(null);
   const socket = useSocket();
 
   useClickOutside(formEl, () => setIsHidden(true));
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (text.trim() === '') return;
-    const formData = new FormData(formEl.current);
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      if (text.trim() === '') return;
+      const formData = new FormData(formEl.current);
 
-    const { error: errorCreatePost } = await api.createPost(formData);
-    if (errorCreatePost) return console.log(errorCreatePost.message);
-    setIsHidden(true);
+      const { error: errorCreatePost } = await api.createPost(formData);
+      if (errorCreatePost) return console.log(errorCreatePost.message);
+      setIsHidden(true);
 
-    const {
-      data: { posts },
-      error: errorGetPosts,
-    } = await api.getPosts();
-    if (errorGetPosts) return console.log(errorGetPosts.message);
-    socket.emit('create post', posts);
-  };
+      const {
+        data: { posts },
+        error: errorGetPosts,
+      } = await api.getPosts();
+      if (errorGetPosts) return console.log(errorGetPosts.message);
+      socket.emit('create post', posts);
+    },
+    [setIsHidden, socket, text]
+  );
+
+  const handleUploadImage = useCallback(
+    (event) => {
+      images.forEach((img) => {
+        URL.revokeObjectURL(img.src);
+      });
+
+      const { files } = event.target;
+      const imgs = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const img = {};
+        img.src = URL.createObjectURL(files[i]);
+        img.alt = files[i].name;
+        imgs.push(img);
+      }
+
+      setImages(imgs);
+    },
+    [images]
+  );
 
   return (
     <Overlay>
@@ -46,7 +70,7 @@ function PostCreate({ setIsHidden }) {
 
         <div className={style.author}>
           <div className={style.authorAvatar}>
-            <img src={avatar} alt="avatar" />
+            <img src={'avatar'} alt="avatar" />
           </div>
           <div>
             <div className={style.authorFullName}>Nguyễn Minh Khánh</div>
@@ -66,11 +90,21 @@ function PostCreate({ setIsHidden }) {
           onChange={(event) => setText(event.target.value)}
         />
 
-        <button
-          className={clsx(style.btnSubmit, { [style.disable]: !text.trim() })}
-        >
-          Đăng
-        </button>
+        <div className={style.imageReview}>
+          {images.map((image) => (
+            <div key={image.src} className={style.image}>
+              <img src={image.src} alt={image.alt} />
+            </div>
+          ))}
+        </div>
+
+        <div className={style.bottom}>
+          <label className={style.labelUploadImg}>
+            <IoImage />
+            <input type="file" name="images" accept="image/*" multiple onChange={handleUploadImage} />
+          </label>
+          <button className={clsx(style.btnSubmit, { [style.disable]: !text.trim() })}>Đăng</button>
+        </div>
       </form>
     </Overlay>
   );

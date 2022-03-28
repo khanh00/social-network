@@ -12,7 +12,7 @@ router.use(authController.checkIfLoggedIn);
 router.get('/', postController.getPosts);
 router.post(
   '/',
-  upload('image', 'images/posts').array('images'),
+  upload('image', 'images/post').array('images'),
   postController.createPost
 );
 
