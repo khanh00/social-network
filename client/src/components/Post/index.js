@@ -85,9 +85,13 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
 
         {images && (
           <div className={style.image}>
-            {images.map((image) => (
-              <img src={`${process.env.REACT_APP_SERVER}/images/post/${image}`} alt="post" key={image} />
-            ))}
+            <img src={`${process.env.REACT_APP_SERVER}/images/post/${images[0]}`} alt="post" key={images[0]} />
+            {images.length > 1 && (
+              <div className={style.imageOther}>
+                <img src={`${process.env.REACT_APP_SERVER}/images/post/${images[1]}`} alt="post" key={images[1]} />
+                <span>{images.length - 1}+</span>
+              </div>
+            )}
           </div>
         )}
 
