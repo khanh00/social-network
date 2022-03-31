@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { IoChatbubbleEllipsesOutline, IoShareSocialOutline } from 'react-icons/io5';
@@ -12,9 +12,14 @@ import CommentCreate from '../CommentCreate';
 import { displayTime } from '../../utils';
 import { useAuth } from '../../contexts/authContext';
 import { useSocket } from '../../contexts/socketContext';
+import ImagesReview from '../ImagesReview';
 
 function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes } }) {
+  images = images.map((image) => `${process.env.REACT_APP_SERVER}/images/post/${image}`);
+  console.log(images);
+
   const [isDisplayComments, setIsDisplayComments] = useState(false);
+  const [isReviewImages, setIsReviewImages] = useState(false);
   const [likeId, setLikeId] = useState(null);
   const [liked, setLiked] = useState(false);
   const [numberOfLikes, setNumberOfLikes] = useState(likes.length);
@@ -63,6 +68,10 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
     };
   }, [socket]);
 
+  const handleReviewImages = useCallback(() => {
+    setIsReviewImages(!isReviewImages);
+  }, [isReviewImages]);
+
   return (
     <li className={style.wrapper}>
       <div className={style.post}>
@@ -84,15 +93,15 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
         )}
 
         {images && (
-          <div className={style.image}>
-            <img src={`${process.env.REACT_APP_SERVER}/images/post/${images[0]}`} alt="post" key={images[0]} />
+          <button className={style.image} onClick={handleReviewImages}>
+            <img src={images[0]} alt="post" key={images[0]} />
             {images.length > 1 && (
               <div className={style.imageOther}>
-                <img src={`${process.env.REACT_APP_SERVER}/images/post/${images[1]}`} alt="post" key={images[1]} />
+                <img src={images[1]} alt="post" key={images[1]} />
                 <span>{images.length - 1}+</span>
               </div>
             )}
-          </div>
+          </button>
         )}
 
         {/* Status */}
@@ -148,6 +157,8 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
           <Comments postId={_id} />
         </>
       )}
+
+      {isReviewImages && <ImagesReview images={images} setIsReviewImages={setIsReviewImages} />}
     </li>
   );
 }

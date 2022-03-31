@@ -8,10 +8,13 @@ import style from './PostCreate.module.scss';
 import * as api from '../../api';
 import { useClickOutside } from '../../utils';
 import { useSocket } from '../../contexts/socketContext';
+import ImagesReview from '../ImagesReview';
 
 function PostCreate({ setIsHidden }) {
   const [text, setText] = useState('');
   const [images, setImages] = useState([]);
+  const [isReviewImages, setIsReviewImages] = useState(false);
+  const [imageReview, setImageReview] = useState();
   const formEl = useRef(null);
   const socket = useSocket();
 
@@ -37,26 +40,20 @@ function PostCreate({ setIsHidden }) {
     [setIsHidden, socket, text]
   );
 
-  const handleUploadImage = useCallback(
-    (event) => {
-      images.forEach((img) => {
-        URL.revokeObjectURL(img.src);
-      });
+  const handleUploadImage = useCallback((event) => {
+    // images.forEach((img) => {
+    //   URL.revokeObjectURL(img.src);
+    // });
 
-      const { files } = event.target;
-      const imgs = [];
+    const { files } = event.target;
+    const imgs = [];
 
-      for (let i = 0; i < files.length; i++) {
-        const img = {};
-        img.src = URL.createObjectURL(files[i]);
-        img.alt = files[i].name;
-        imgs.push(img);
-      }
+    for (let i = 0; i < files.length; i++) {
+      imgs.push(URL.createObjectURL(files[i]));
+    }
 
-      setImages(imgs);
-    },
-    [images]
-  );
+    setImages(imgs);
+  }, []);
 
   return (
     <Overlay>
@@ -90,13 +87,22 @@ function PostCreate({ setIsHidden }) {
           onChange={(event) => setText(event.target.value)}
         />
 
-        <div className={style.imageReview}>
+        <div className={style.imagesReview}>
           {images.map((image) => (
-            <div key={image.src} className={style.image}>
-              <img src={image.src} alt={image.alt} />
-            </div>
+            <button
+              key={image}
+              className={style.image}
+              onClick={() => {
+                setIsReviewImages(true);
+                setImageReview(image);
+              }}
+            >
+              <img src={image} alt={image} />
+            </button>
           ))}
         </div>
+
+        {isReviewImages && <ImagesReview images={images} image={imageReview} setIsReviewImages={setIsReviewImages} />}
 
         <div className={style.bottom}>
           <label className={style.labelUploadImg}>
