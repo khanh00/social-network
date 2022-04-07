@@ -10,14 +10,12 @@ const getUsers = catchAsync(async (req, res) => {
 });
 
 const getUser = catchAsync(async (req, res) => {
-  const user = await User.findOne({ _id: req.params.id })
-    .select('+password')
-    .exec();
+  const user = await User.findOne({ _id: req.params.id }).select('+password').exec();
   sendJsonRes(res, OK, { user });
 });
 
 const getCurrentUser = catchAsync(async (req, res) => {
-  const user = await User.findOne({ _id: req.body.author });
+  const user = await User.findOne({ _id: req.author });
   sendJsonRes(res, OK, { user });
 });
 

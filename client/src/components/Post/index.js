@@ -16,7 +16,6 @@ import ImagesReview from '../ImagesReview';
 
 function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes } }) {
   images = images.map((image) => `${process.env.REACT_APP_SERVER}/images/post/${image}`);
-  console.log(images);
 
   const [isDisplayComments, setIsDisplayComments] = useState(false);
   const [isReviewImages, setIsReviewImages] = useState(false);
@@ -92,7 +91,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
           </div>
         )}
 
-        {images && (
+        {images.length > 0 && (
           <button className={style.image} onClick={handleReviewImages}>
             <img src={images[0]} alt="post" key={images[0]} />
             {images.length > 1 && (
@@ -134,7 +133,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
           <div>Thích</div>
         </button>
 
-        <button>
+        <button onClick={() => setIsDisplayComments(!isDisplayComments)}>
           <div className={style.actionIcon}>
             <IoChatbubbleEllipsesOutline />
           </div>

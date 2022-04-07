@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 
 const postSchema = Schema(
   {
-    text: String,
+    text: { type: String, trim: true },
     images: [String],
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
