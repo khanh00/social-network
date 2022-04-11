@@ -14,11 +14,36 @@ function Navigation() {
   return (
     <nav className={style.container}>
       <ul className={style.list}>
-        <ListItem.Link to="/" left={{ icon: <IoHomeOutline /> }} right="Trang chủ" />
-        <ListItem.Link to="/friends" left={{ icon: <IoPersonAddOutline /> }} right="Bạn bè" />
-        <ListItem.Link to="/groups" left={{ icon: <IoPeopleOutline /> }} right="Nhóm" />
-        <ListItem.Link to="/messages" left={{ icon: <IoChatboxEllipsesOutline /> }} right="Nhắn tin" />
-        <ListItem.Link to="/settings" left={{ icon: <IoSettingsOutline /> }} right="Cài đặt" />
+        <ListItem.Link
+          to="/"
+          left={{ icon: <IoHomeOutline /> }}
+          right="Trang chủ"
+          active={'/' === window.location.pathname}
+        />
+        <ListItem.Link
+          to="/friends"
+          left={{ icon: <IoPersonAddOutline /> }}
+          right="Bạn bè"
+          active={'/friends' === window.location.pathname}
+        />
+        <ListItem.Link
+          to="/groups"
+          left={{ icon: <IoPeopleOutline /> }}
+          right="Nhóm"
+          active={'/groups' === window.location.pathname}
+        />
+        <ListItem.Link
+          to="/messages"
+          left={{ icon: <IoChatboxEllipsesOutline /> }}
+          right="Nhắn tin"
+          active={'/messages' === window.location.pathname}
+        />
+        <ListItem.Link
+          to="/settings"
+          left={{ icon: <IoSettingsOutline /> }}
+          right="Cài đặt"
+          active={'/settings' === window.location.pathname}
+        />
       </ul>
     </nav>
   );

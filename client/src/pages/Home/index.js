@@ -10,15 +10,23 @@ import { useSocket } from '../../contexts/socketContext';
 
 function Home() {
   const [posts, setPosts] = useState();
+  const [authorLikes, setAuthorLikes] = useState([]);
   const socket = useSocket();
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       const { data, error } = await api.getPosts();
       if (error) return console.log(error.message);
       setPosts(data.posts);
-    };
-    fetchData();
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await api.getAuthorLikes();
+      if (error) return console.log(error.message);
+      setAuthorLikes(data.likes);
+    })();
   }, []);
 
   useEffect(() => {
@@ -40,7 +48,9 @@ function Home() {
           <main>
             <ul>
               {posts &&
-                posts.map((post) => <Post key={post._id} post={post} />)}
+                posts.map((post) => (
+                  <Post key={post._id} post={post} liked={authorLikes.some((like) => like.post === post._id)} />
+                ))}
             </ul>
           </main>
         </Grid.Item>

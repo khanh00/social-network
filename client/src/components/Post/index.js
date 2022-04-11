@@ -10,53 +10,43 @@ import Hr from '../ui/Hr';
 import * as api from '../../api';
 import CommentCreate from '../CommentCreate';
 import { displayTime } from '../../utils';
-import { useAuth } from '../../contexts/authContext';
 import { useSocket } from '../../contexts/socketContext';
 import ImagesReview from '../ImagesReview';
 
-function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes } }) {
+function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes }, liked }) {
   images = images.map((image) => `${process.env.REACT_APP_SERVER}/images/post/${image}`);
 
   const [isDisplayComments, setIsDisplayComments] = useState(false);
   const [isReviewImages, setIsReviewImages] = useState(false);
-  const [likeId, setLikeId] = useState(null);
-  const [liked, setLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(liked);
   const [numberOfLikes, setNumberOfLikes] = useState(likes.length);
   const [numberOfComments, setNumberOfComments] = useState(comments.length);
-  const auth = useAuth();
   const socket = useSocket();
 
   const handleLike = async () => {
-    if (liked) {
-      const { error } = api.deleteLike(likeId);
+    if (isLiked) {
+      const { data, error: errorGetLike } = await api.getAuthorLikes(`post=${_id}`);
+      if (errorGetLike) return console.log(errorGetLike.message);
 
-      if (error) return console.log(error.message);
+      const { error: errorDelLike } = await api.deleteLike(data.likes[0]._id);
+      if (errorDelLike) return console.log(errorDelLike.message);
 
-      setLiked(false);
+      setIsLiked(false);
       setNumberOfLikes((prev) => prev - 1);
     }
 
-    if (!liked) {
-      const { data, error } = await api.createLike({
+    if (!isLiked) {
+      const { error } = await api.createLike({
         type: 'like',
         post: _id,
       });
 
       if (error) return console.log(error.message);
 
-      setLikeId(data._id);
-      setLiked(true);
+      setIsLiked(true);
       setNumberOfLikes((prev) => prev + 1);
     }
   };
-
-  useEffect(() => {
-    const like = likes.find((like) => like.author === auth.currentUser);
-    if (like) {
-      setLikeId(like._id);
-      setLiked(true);
-    }
-  }, [auth.currentUser, likes]);
 
   useEffect(() => {
     socket.on('change number comments', (number) => {
@@ -125,10 +115,10 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
         <button onClick={handleLike}>
           <div
             className={clsx(style.actionIcon, {
-              [style.actionIconLiked]: liked,
+              [style.actionIconLiked]: isLiked,
             })}
           >
-            {liked ? <AiFillLike /> : <AiOutlineLike />}
+            {isLiked ? <AiFillLike /> : <AiOutlineLike />}
           </div>
           <div>Thích</div>
         </button>
@@ -164,6 +154,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
 
 Post.propTypes = {
   post: PropTypes.object,
+  liked: PropTypes.bool,
 };
 
 export default Post;

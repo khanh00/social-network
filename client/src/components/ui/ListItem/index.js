@@ -5,9 +5,7 @@ import clsx from 'clsx';
 import style from './ListItem.module.scss';
 
 const ListItem = {
-  Link: function ({ to, left, right }) {
-    const active = to === window.location.pathname;
-
+  Link: function ({ to, left, right, active = false }) {
     return (
       <li>
         <Link className={clsx(style.link, { [style.active]: active })} to={to}>
@@ -24,6 +22,7 @@ ListItem.Link.propTypes = {
   to: PropTypes.string.isRequired,
   left: PropTypes.object,
   right: PropTypes.string.isRequired,
+  active: PropTypes.bool,
 };
 
 export default ListItem;

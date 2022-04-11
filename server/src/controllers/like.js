@@ -9,6 +9,11 @@ const getLikes = async (req, res) => {
   sendJsonRes(res, OK, { likes });
 };
 
+const getAuthorLikes = async (req, res) => {
+  const likes = await Like.find({ ...req.query.filter, author: req.author });
+  sendJsonRes(res, OK, { likes });
+};
+
 const getLike = async (req, res) => {
   const like = await Like.findById(req.params.id);
   sendJsonRes(res, OK, { like });
@@ -21,26 +26,26 @@ const createLike = async (req, res) => {
   const newLike = await Like.create({ type, author, post });
 
   await User.findByIdAndUpdate(author, {
-    $push: { likes: newLike._id },
+    $addToSet: { likes: post },
   }).exec();
   await Post.findByIdAndUpdate(post, {
-    $push: { likes: newLike._id },
+    $addToSet: { likes: author },
   }).exec();
 
   sendJsonRes(res, CREATED, { like: newLike });
 };
 
 const deleteLike = async (req, res) => {
-  const { _id, post } = await Like.findByIdAndDelete(req.params.id).exec();
+  const { post, author } = await Like.findByIdAndDelete(req.params.id).exec();
 
-  await User.findByIdAndUpdate(req.author, {
-    $pull: { likes: _id },
+  await User.findByIdAndUpdate(author, {
+    $pull: { likes: post },
   }).exec();
   await Post.findByIdAndUpdate(post, {
-    $pull: { likes: _id },
+    $pull: { likes: author },
   }).exec();
 
   sendJsonRes(res, NO_CONTENT, null);
 };
 
-export default { getLikes, getLike, createLike, deleteLike };
+export default { getLikes, getAuthorLikes, getLike, createLike, deleteLike };

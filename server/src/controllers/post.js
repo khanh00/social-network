@@ -10,7 +10,7 @@ const getPosts = catchAsync(async (req, res) => {
     .sort(sort)
     .select(select)
     .populate('author', 'avatar fullName -_id')
-    .populate('likes', '-post -__v');
+    .populate('likes.like', '-post -__v');
   sendJsonRes(res, OK, { posts });
 });
 

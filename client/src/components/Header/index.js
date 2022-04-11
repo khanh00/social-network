@@ -6,12 +6,7 @@ import Logo from '../ui/Logo';
 import Button from '../ui/Button';
 import ListItem from '../ui/ListItem';
 import style from './Header.module.scss';
-import {
-  IoPersonOutline,
-  IoCogOutline,
-  IoLogOutOutline,
-  IoNotificationsOutline,
-} from 'react-icons/io5';
+import { IoPersonOutline, IoCogOutline, IoLogOutOutline, IoNotificationsOutline } from 'react-icons/io5';
 import { useClickOutside } from '../../utils';
 import PostCreate from '../PostCreate';
 
@@ -35,14 +30,8 @@ function Header() {
         </div>
 
         <div className={style.right}>
-          <Button.Default onClick={() => setIsHiddenPostCreate(false)}>
-            Bài viết mới
-          </Button.Default>
-          {!isHiddenPostCreate && (
-            <PostCreate
-              setIsHidden={(isHidden) => setIsHiddenPostCreate(isHidden)}
-            />
-          )}
+          <Button.Default onClick={() => setIsHiddenPostCreate(false)}>Bài viết mới</Button.Default>
+          {!isHiddenPostCreate && <PostCreate setIsHidden={(isHidden) => setIsHiddenPostCreate(isHidden)} />}
 
           {/* Notification */}
           <button
@@ -63,11 +52,7 @@ function Header() {
           </button>
 
           {/* User */}
-          <button
-            ref={userEl}
-            className={style.user}
-            onClick={() => setIsHiddenUserDropdown(!isHiddenUserDropdown)}
-          >
+          <button ref={userEl} className={style.user} onClick={() => setIsHiddenUserDropdown(!isHiddenUserDropdown)}>
             <div className={style.icon}>
               <IoPersonOutline />
             </div>
@@ -76,22 +61,10 @@ function Header() {
                 [style.hidden]: isHiddenUserDropdown,
               })}
             >
-              <ListItem.Link
-                to="/"
-                left={{ icon: <IoPersonOutline /> }}
-                right="Trang cá nhân"
-              />
-              <ListItem.Link
-                to="/"
-                left={{ icon: <IoCogOutline /> }}
-                right="Tài khoản"
-              />
+              <ListItem.Link to="/" left={{ icon: <IoPersonOutline /> }} right="Trang cá nhân" />
+              <ListItem.Link to="/" left={{ icon: <IoCogOutline /> }} right="Tài khoản" />
               <hr />
-              <ListItem.Link
-                to="/"
-                left={{ icon: <IoLogOutOutline /> }}
-                right="Đăng xuất"
-              />
+              <ListItem.Link to="/" left={{ icon: <IoLogOutOutline /> }} right="Đăng xuất" />
             </ul>
           </button>
         </div>
