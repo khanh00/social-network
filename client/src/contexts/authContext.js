@@ -4,22 +4,18 @@ import PropTypes from 'prop-types';
 const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(localStorage.getItem('id'));
+  const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem('user')));
 
-  const login = (id) => {
-    localStorage.setItem('id', id);
-    setCurrentUser(id);
+  const login = (user) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    setCurrentUser(user);
   };
   const logout = () => {
-    localStorage.removeItem('id');
+    localStorage.removeItem('user');
     setCurrentUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ currentUser, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 AuthProvider.propTypes = {

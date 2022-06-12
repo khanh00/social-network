@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import clsx from 'clsx';
 
 import Search from '../Search';
@@ -9,17 +9,32 @@ import style from './Header.module.scss';
 import { IoPersonOutline, IoCogOutline, IoLogOutOutline, IoNotificationsOutline } from 'react-icons/io5';
 import { useClickOutside } from '../../utils';
 import PostCreate from '../PostCreate';
+import * as api from '../../api';
+import { useAuth } from '../../contexts/authContext';
 
 function Header() {
   const [isHiddenUserDropdown, setIsHiddenUserDropdown] = useState(true);
   const [isHiddenNotifDropdown, setIsHiddenNotifDropdown] = useState(true);
   const [isHiddenPostCreate, setIsHiddenPostCreate] = useState(true);
-
+  const auth = useAuth();
   const userEl = useRef(null);
   const notifEl = useRef(null);
 
   useClickOutside(userEl, () => setIsHiddenUserDropdown(true));
   useClickOutside(notifEl, () => setIsHiddenNotifDropdown(true));
+
+  const handleLogout = useCallback(
+    async (event) => {
+      event.preventDefault();
+
+      const { error } = await api.logout();
+      if (error) return console.log(error.message);
+
+      auth.logout();
+      document.location.href = '/login';
+    },
+    [auth]
+  );
 
   return (
     <div className={style.wrapper}>
@@ -64,7 +79,7 @@ function Header() {
               <ListItem.Link to="/" left={{ icon: <IoPersonOutline /> }} right="Trang cá nhân" />
               <ListItem.Link to="/" left={{ icon: <IoCogOutline /> }} right="Tài khoản" />
               <hr />
-              <ListItem.Link to="/" left={{ icon: <IoLogOutOutline /> }} right="Đăng xuất" />
+              <ListItem.Link to="/" left={{ icon: <IoLogOutOutline /> }} right="Đăng xuất" onClick={handleLogout} />
             </ul>
           </button>
         </div>

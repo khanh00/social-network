@@ -2,25 +2,22 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AiOutlineSend } from 'react-icons/ai';
 
-// import avatar from '../../assets/Screenshot from 2021-12-30 10-41-51.png';
 import style from './CommentCreate.module.scss';
 import * as api from '../../api';
 import { useSocket } from '../../contexts/socketContext';
+import { useAuth } from '../../contexts/authContext';
 
 function CommentCreate({ postId }) {
   const [text, setText] = useState('');
   const socket = useSocket();
+  const { currentUser } = useAuth();
 
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
       if (text.trim() === '') return;
-
-      const formData = new FormData();
-      formData.append('text', text);
-      formData.append('post', postId);
-
-      const { error: errorCreateComment } = await api.createComment(formData);
+      
+      const { error: errorCreateComment } = await api.createComment({ text, post: postId });
       if (errorCreateComment) return console.log(errorCreateComment.message);
       setText('');
 
@@ -37,7 +34,7 @@ function CommentCreate({ postId }) {
   return (
     <form className={style.wrapper} onSubmit={handleSubmit}>
       <div className={style.avatar}>
-        <img src={'avatar'} alt="avatar" />
+        <img src={currentUser.avatar} alt={currentUser.fullName} />
       </div>
       <input
         className={style.input}

@@ -1,5 +1,5 @@
 import { httpStatus } from '../constants';
-import { Post } from '../models';
+import { Post, User } from '../models';
 import { catchAsync, sendJsonRes } from '../utils';
 
 const { OK, CREATED, NO_CONTENT } = httpStatus;
@@ -20,13 +20,21 @@ const getPost = catchAsync(async (req, res) => {
 });
 
 const createPost = catchAsync(async (req, res) => {
-  const images = [];
+  const files = [];
   req.files.forEach((file) => {
-    images.push(`${file.filename}`);
+    files.push({
+      src: `${file.destination.split('./public/')[1]}/${file.filename}`,
+      typeFile: file.mimetype.split('/')[0],
+    });
   });
   const { text } = req.body;
   const { author } = req;
-  const newPost = await Post.create({ text, images, author });
+  const newPost = await Post.create({ text, files, author });
+
+  await User.findByIdAndUpdate(author, {
+    $addToSet: { posts: newPost._id },
+  }).exec();
+
   sendJsonRes(res, CREATED, { post: newPost });
 });
 
@@ -39,7 +47,13 @@ const updatePost = catchAsync(async (req, res) => {
 });
 
 const deletePost = catchAsync(async (req, res) => {
-  await Post.findByIdAndDelete(req.params.id);
+  const { author } = req;
+  const { _id } = await Post.findByIdAndDelete(req.params.id);
+
+  await User.findByIdAndUpdate(author, {
+    $pull: { posts: _id },
+  }).exec();
+
   sendJsonRes(res, NO_CONTENT, null);
 });
 

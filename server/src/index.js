@@ -29,13 +29,13 @@ socket.createSocket(httpServer);
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-app.use(express.static(join(__dirname, 'public')));
+app.use(express.static(join(__dirname, '../public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(apiQueryParams);
-app.use('/api', routes);
+app.use('/api', routes);  
 app.all('*', (req, res) => {
   sendJsonRes(res, httpStatus.NOT_FOUND, {
     message: `Cannot find address ${req.originalUrl} on this server.`,

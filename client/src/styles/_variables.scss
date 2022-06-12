@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Berkshire Swash';
+  src: url('../../public/BerkshireSwash-Regular.ttf') format('truetype');
+}
+
 $font-family-logo: 'Berkshire Swash';
 $font-family: 'Roboto';
 
@@ -21,9 +26,8 @@ $color-grey-110: #f8f8f8;
 $color-white: #fff;
 $color-black: #000;
 
-$box-shadow: 0 0 0 1px $color-grey-90, 0 0 10px $color-grey-90,
-  0 0 20px $color-grey-100;
+$box-shadow: 0 0 0 1px $color-grey-90, 0 0 10px $color-grey-90, 0 0 20px $color-grey-100;
 
-$z-index-header: 400;
-$z-index-user: 500;
+$z-index-header: 990;
+$z-index-user: 980;
 $z-index-overlay: 1000;

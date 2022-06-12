@@ -5,7 +5,6 @@ const { Schema, model } = mongoose;
 const commentSchema = Schema(
   {
     text: String,
-    image: String,
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     post: { type: Schema.Types.ObjectId, ref: 'Post' },
   },

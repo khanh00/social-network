@@ -4,16 +4,16 @@ import { customValidation } from '../utils';
 const { objectId } = customValidation;
 
 const getUser = {
-  params: Joi.object().keys({
+  params: Joi.object({
     id: Joi.string().custom(objectId).required(),
   }),
 };
 
 const updateUser = {
-  params: Joi.object().keys({
+  params: Joi.object({
     id: Joi.string().custom(objectId).required(),
   }),
-  body: Joi.object().keys({
+  body: Joi.object({
     avatar: Joi.string(),
     imageCover: Joi.string(),
     fullName: Joi.string(),
@@ -21,13 +21,13 @@ const updateUser = {
     email: Joi.string().email(),
     password: Joi.string().min(8),
     friends: Joi.string().custom(objectId),
-    $push: Joi.object(),
+    $addToSet: Joi.object(),
     $pull: Joi.object(),
   }),
 };
 
 const deleteUser = {
-  params: Joi.object().keys({
+  params: Joi.object({
     id: Joi.string().custom(objectId).required(),
   }),
 };

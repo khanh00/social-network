@@ -23,7 +23,6 @@ const createComment = catchAsync(async (req, res) => {
   const { text, post } = req.body;
   const { author } = req;
   const newComment = await Comment.create({ text, author, post });
-
   newComment.populate('author', 'avatar fullName -_id');
   await User.findByIdAndUpdate(author, {
     $push: { comments: newComment._id },
@@ -44,9 +43,7 @@ const updateComment = catchAsync(async (req, res) => {
 });
 
 const deleteComment = catchAsync(async (req, res) => {
-  const { _id, author, post } = await Comment.findByIdAndDelete(
-    req.params.id
-  ).exec();
+  const { _id, author, post } = await Comment.findByIdAndDelete(req.params.id).exec();
 
   await User.findByIdAndUpdate(author, {
     $pull: { comments: _id },

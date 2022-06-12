@@ -3,10 +3,10 @@ import multer from 'multer';
 import AppError from './AppError';
 import { httpStatus } from '../constants';
 
-const upload = (type, destination) => {
+const upload = (destination) => {
   const storage = multer.diskStorage({
-    destination: (_, __, cb) => {
-      cb(null, `./src/public/${destination}`);
+    destination: (_, file, cb) => {
+      cb(null, `./public/${destination}/${file.mimetype.split('/')[0]}s`);
     },
 
     filename: (req, file, cb) => {
@@ -15,10 +15,10 @@ const upload = (type, destination) => {
   });
 
   const fileFilter = (_, file, cb) => {
-    if (file.mimetype.startsWith(type)) {
+    if (file.mimetype.startsWith('image') || file.mimetype.startsWith('video')) {
       cb(null, true);
     } else {
-      cb(new AppError(httpStatus.BAD_REQUEST, `Not ${type}.`));
+      cb(new AppError(httpStatus.BAD_REQUEST, `Invalid file.`));
     }
   };
 

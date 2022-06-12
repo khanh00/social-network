@@ -33,7 +33,9 @@ function Home() {
     socket.on('change posts', (posts) => {
       setPosts(posts);
     });
-    return socket.off('change posts');
+    return () => {
+      socket.off('change posts');
+    };
   }, [socket]);
 
   return (

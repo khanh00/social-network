@@ -10,12 +10,7 @@ const router = Router();
 router.use(authController.checkIfLoggedIn);
 
 router.get('/', postController.getPosts);
-router.post(
-  '/',
-  upload('image', 'images/post').array('images'),
-  validate(postValidation.createPost),
-  postController.createPost
-);
+router.post('/', upload('post').array('files'), validate(postValidation.createPost), postController.createPost);
 
 router.get('/:id', postController.getPost);
 router.patch('/:id', validate(postValidation.updatePost), postController.updatePost);

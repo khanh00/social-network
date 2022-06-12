@@ -11,7 +11,7 @@
   background: linear-gradient(rgba($color-black, 0.75) 10%, rgba($color-black, 0.46) 60%);
   z-index: 1000;
 
-  .images {
+  .files {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -33,10 +33,11 @@
       filter: brightness(100%);
     }
 
-    img {
+    img, video {
       width: 5rem;
       height: 5rem;
       border-radius: 4px;
+      object-fit: cover;
       cursor: pointer;
     }
 
@@ -59,9 +60,8 @@
   cursor: pointer;
 }
 
-.imageReview {
+.fileReview {
   display: flex;
-  align-items: center;
   justify-content: center;
   height: 90%;
   margin-top: 3rem;

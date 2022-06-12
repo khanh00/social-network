@@ -27,9 +27,7 @@ const login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return next(
-      new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác')
-    );
+    return next(new AppError(UNAUTHORIZED, 'Email hoặc mật khẩu không chính xác'));
   }
 
   const token = signToken({ id: user._id });

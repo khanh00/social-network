@@ -1,18 +1,15 @@
 import { Router } from 'express';
 
 import { authController, commentController } from '../controllers';
-import { upload } from '../utils';
+import { validate } from '../middleware';
+import { commentValidation } from '../validations';
 
 const router = Router();
 
 router.use(authController.checkIfLoggedIn);
 
 router.get('/', commentController.getComments);
-router.post(
-  '/',
-  upload('image', 'images/comments').array('images'),
-  commentController.createComment
-);
+router.post('/', validate(commentValidation.createComment), commentController.createComment);
 
 router.get('/:id', commentController.getComment);
 router.patch('/:id', commentController.updateComment);

@@ -5,7 +5,7 @@ import * as api from '../../api';
 import { useAuth } from '../../contexts/authContext';
 
 function FriendCard({ user }) {
-  const auth = useAuth();
+  const { currentUser } = useAuth();
   const [isFriend, setIsFriend] = useState(false);
 
   useEffect(() => {
@@ -19,19 +19,28 @@ function FriendCard({ user }) {
 
   const handleAddFriend = (event) => {
     event.preventDefault();
-    const { error } = api.updateUser(auth.currentUser, {
-      $push: { friends: user._id },
+    const { error: error1 } = api.updateUser(currentUser._id, {
+      $addToSet: { friends: user._id },
     });
-    if (error) return console.log(error.message);
+    if (error1) return console.log(error1.message);
+    const { error: error2 } = api.updateUser(user._id, {
+      $addToSet: { friends: currentUser._id },
+    });
+    if (error2) return console.log(error2.message);
+
     setIsFriend(true);
   };
 
   const handleUnFriend = (event) => {
     event.preventDefault();
-    const { error } = api.updateUser(auth.currentUser, {
+    const { error: error1 } = api.updateUser(currentUser._id, {
       $pull: { friends: user._id },
     });
-    if (error) return console.log(error.message);
+    if (error1) return console.log(error1.message);
+    const { error: error2 } = api.updateUser(user._id, {
+      $pull: { friends: currentUser._id },
+    });
+    if (error2) return console.log(error2.message);
     setIsFriend(false);
   };
 

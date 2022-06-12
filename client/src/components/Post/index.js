@@ -1,8 +1,9 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { IoChatbubbleEllipsesOutline, IoShareSocialOutline } from 'react-icons/io5';
-import { AiFillLike, AiOutlineLike, AiTwotoneLike } from 'react-icons/ai';
+import { IoChatbubbleEllipsesOutline, IoShareSocialOutline, IoPlayCircleOutline } from 'react-icons/io5';
+import { AiFillLike, AiOutlineLike } from 'react-icons/ai';
 
 import style from './Post.module.scss';
 import Comments from './Comments';
@@ -11,19 +12,19 @@ import * as api from '../../api';
 import CommentCreate from '../CommentCreate';
 import { displayTime } from '../../utils';
 import { useSocket } from '../../contexts/socketContext';
-import ImagesReview from '../ImagesReview';
+import FilesReview from '../FilesReview';
 
-function Post({ post: { _id, text, images, createdAt, updatedAt, author, comments, likes }, liked }) {
-  images = images.map((image) => `${process.env.REACT_APP_SERVER}/images/post/${image}`);
+function Post({ post: { _id, text, files, createdAt, updatedAt, author, comments, likes }, liked }) {
+  files = files.map((file) => ({ ...file, src: `${process.env.REACT_APP_SERVER}/${file.src}` }));
 
   const [isDisplayComments, setIsDisplayComments] = useState(false);
-  const [isReviewImages, setIsReviewImages] = useState(false);
+  const [isReviewFiles, setIsReviewFiles] = useState(false);
   const [isLiked, setIsLiked] = useState(liked);
   const [numberOfLikes, setNumberOfLikes] = useState(likes.length);
   const [numberOfComments, setNumberOfComments] = useState(comments.length);
   const socket = useSocket();
 
-  const handleLike = async () => {
+  const handleLike = useCallback(async () => {
     if (isLiked) {
       const { data, error: errorGetLike } = await api.getAuthorLikes(`post=${_id}`);
       if (errorGetLike) return console.log(errorGetLike.message);
@@ -32,7 +33,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
       if (errorDelLike) return console.log(errorDelLike.message);
 
       setIsLiked(false);
-      setNumberOfLikes((prev) => prev - 1);
+      socket.emit('delete like');
     }
 
     if (!isLiked) {
@@ -44,9 +45,23 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
       if (error) return console.log(error.message);
 
       setIsLiked(true);
-      setNumberOfLikes((prev) => prev + 1);
+      socket.emit('create like');
     }
-  };
+  }, [_id, isLiked, socket]);
+
+  useEffect(() => {
+    socket.on('increase like', () => {
+      setNumberOfLikes((prev) => prev + 1);
+    });
+    socket.on('decrease like', () => {
+      setNumberOfLikes((prev) => prev - 1);
+    });
+
+    return () => {
+      socket.off('increase like');
+      socket.off('decrease like');
+    };
+  }, [socket]);
 
   useEffect(() => {
     socket.on('change number comments', (number) => {
@@ -57,9 +72,9 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
     };
   }, [socket]);
 
-  const handleReviewImages = useCallback(() => {
-    setIsReviewImages(!isReviewImages);
-  }, [isReviewImages]);
+  const handleReviewFiles = useCallback(() => {
+    setIsReviewFiles(!isReviewFiles);
+  }, [isReviewFiles]);
 
   return (
     <li className={style.wrapper}>
@@ -81,13 +96,23 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
           </div>
         )}
 
-        {images.length > 0 && (
-          <button className={style.image} onClick={handleReviewImages}>
-            <img src={images[0]} alt="post" key={images[0]} />
-            {images.length > 1 && (
-              <div className={style.imageOther}>
-                <img src={images[1]} alt="post" key={images[1]} />
-                <span>{images.length - 1}+</span>
+        {files.length > 0 && (
+          <button className={style.file} onClick={handleReviewFiles}>
+            {files[0].typeFile === 'image' && <img src={files[0].src} alt={files[0].src} />}
+            {files[0].typeFile === 'video' && (
+              <div className={style.video}>
+                <video src={files[0].src}></video>
+                <div className={style.icon}>
+                  <IoPlayCircleOutline />
+                </div>
+              </div>
+            )}
+
+            {files.length > 1 && (
+              <div className={style.filesOther}>
+                {files[1].typeFile === 'image' && <img src={files[1].src} alt={files[1].src} />}
+                {files[1].typeFile === 'video' && <video src={files[1].src}></video>}
+                <span>{files.length - 1}+</span>
               </div>
             )}
           </button>
@@ -97,7 +122,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
         <div className={style.status}>
           <div className={style.statusLike}>
             <div className={style.statusIcon}>
-              <AiTwotoneLike />
+              <AiFillLike />
             </div>
             {numberOfLikes}
           </div>
@@ -147,7 +172,7 @@ function Post({ post: { _id, text, images, createdAt, updatedAt, author, comment
         </>
       )}
 
-      {isReviewImages && <ImagesReview images={images} setIsReviewImages={setIsReviewImages} />}
+      {isReviewFiles && <FilesReview files={files} setIsReviewFiles={setIsReviewFiles} />}
     </li>
   );
 }

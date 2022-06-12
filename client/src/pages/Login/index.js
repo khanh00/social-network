@@ -6,6 +6,7 @@ import Logo from '../../components/ui/Logo';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import style from './Login.module.scss';
+import { useSocket } from '../../contexts/socketContext';
 
 function Login() {
   const [input, setInput] = useState({ email: '', password: '' });
@@ -13,6 +14,7 @@ function Login() {
   const [inputIsValid, setInputIsValid] = useState(false);
   const [error, setError] = useState();
   const auth = useAuth();
+  const socket = useSocket();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,9 +22,11 @@ function Login() {
     if (!inputIsValid) return;
 
     const { data, error } = await api.login(input);
-    if (error) return setError(error.message);
+    if (error) return setError(error.data.message);
 
-    auth.login(data.user._id);
+    const { _id, avatar, fullName } = data.user;
+    auth.login({ _id, avatar, fullName });
+    socket.emit('login', _id);
     document.location.href = '/';
   };
 

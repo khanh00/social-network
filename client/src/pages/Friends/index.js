@@ -9,15 +9,15 @@ import { useAuth } from '../../contexts/authContext';
 
 function Friends() {
   const [users, setUsers] = useState(null);
-  const auth = useAuth();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await api.getUsers(`_id[ne]=${auth.currentUser}`);
-      if (error) console.log(error.message);
+      const { data, error } = await api.getUsers(`_id[ne]=${currentUser._id}`);
+      if (error) return console.log(error.message);
       setUsers(data.users);
     })();
-  }, [auth.currentUser]);
+  }, [currentUser._id]);
 
   return (
     <>

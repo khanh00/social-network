@@ -8,14 +8,16 @@ import style from './PostCreate.module.scss';
 import * as api from '../../api';
 import { useClickOutside } from '../../utils';
 import { useSocket } from '../../contexts/socketContext';
-import ImagesReview from '../ImagesReview';
+import FilesReview from '../FilesReview';
+import { useAuth } from '../../contexts/authContext';
 
 function PostCreate({ setIsHidden }) {
   const [text, setText] = useState('');
-  const [images, setImages] = useState([]);
-  const [isReviewImages, setIsReviewImages] = useState(false);
-  const [imageReview, setImageReview] = useState();
+  const [files, setFiles] = useState([]);
+  const [isReviewFiles, setIsReviewFiles] = useState(false);
+  const [fileReview, setFileReview] = useState();
   const formEl = useRef(null);
+  const { currentUser } = useAuth();
   const socket = useSocket();
 
   useClickOutside(formEl, () => setIsHidden(true));
@@ -30,34 +32,25 @@ function PostCreate({ setIsHidden }) {
       if (errorCreatePost) return console.log(errorCreatePost.message);
       setIsHidden(true);
 
-      const {
-        data: { posts },
-        error: errorGetPosts,
-      } = await api.getPosts();
+      const { data, error: errorGetPosts } = await api.getPosts();
       if (errorGetPosts) return console.log(errorGetPosts.message);
-      socket.emit('create post', posts);
+      socket.emit('create post', data.posts);
     },
     [setIsHidden, socket, text]
   );
 
-  const handleUploadImage = useCallback((event) => {
-    // images.forEach((img) => {
-    //   URL.revokeObjectURL(img.src);
-    // });
-
+  const handleUploadFile = useCallback((event) => {
     const { files } = event.target;
-    const imgs = [];
-
+    const arr = [];
     for (let i = 0; i < files.length; i++) {
-      imgs.push(URL.createObjectURL(files[i]));
+      arr.push({ src: URL.createObjectURL(files[i]), typeFile: files[i].type.split('/')[0] });
     }
-
-    setImages(imgs);
+    setFiles(arr);
   }, []);
 
   return (
     <Overlay>
-      <form ref={formEl} className={style.wrapper} onSubmit={handleSubmit}>
+      <form ref={formEl} className={style.wrapper}>
         <div className={style.top}>
           <h3 className={style.topHeading}>Tạo bài viết</h3>
           <button className={style.topIcon} onClick={() => setIsHidden(true)}>
@@ -67,10 +60,10 @@ function PostCreate({ setIsHidden }) {
 
         <div className={style.author}>
           <div className={style.authorAvatar}>
-            <img src={'avatar'} alt="avatar" />
+            <img src={currentUser.avatar} alt={currentUser.fullName} />
           </div>
           <div>
-            <div className={style.authorFullName}>Nguyễn Minh Khánh</div>
+            <div className={style.authorFullName}>{currentUser.fullName}</div>
             <div className={style.authorRole}>
               <IoLockClosed />
               Chỉ mình tôi
@@ -87,29 +80,36 @@ function PostCreate({ setIsHidden }) {
           onChange={(event) => setText(event.target.value)}
         />
 
-        <div className={style.imagesReview}>
-          {images.map((image) => (
+        <div className={style.filesReview}>
+          {files.map((file) => (
             <button
-              key={image}
-              className={style.image}
-              onClick={() => {
-                setIsReviewImages(true);
-                setImageReview(image);
+              key={file.src}
+              className={style.file}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsReviewFiles(true);
+                setFileReview(file);
               }}
             >
-              <img src={image} alt={image} />
+              {file.typeFile === 'image' && <img src={file.src} alt={file.src} />}
+              {file.typeFile === 'video' && (
+                // eslint-disable-next-line jsx-a11y/media-has-caption
+                <video src={file.src}></video>
+              )}
             </button>
           ))}
         </div>
 
-        {isReviewImages && <ImagesReview images={images} image={imageReview} setIsReviewImages={setIsReviewImages} />}
+        {isReviewFiles && <FilesReview files={files} file={fileReview} setIsReviewFiles={setIsReviewFiles} />}
 
         <div className={style.bottom}>
-          <label className={style.labelUploadImg}>
+          <label className={style.labelUploadFile}>
             <IoImage />
-            <input type="file" name="images" accept="image/*" multiple onChange={handleUploadImage} />
+            <input type="file" name="files" accept="image/*, video/*" multiple onChange={handleUploadFile} />
           </label>
-          <button className={clsx(style.btnSubmit, { [style.disable]: !text.trim() })}>Đăng</button>
+          <button className={clsx(style.btnSubmit, { [style.disable]: !text.trim() })} onClick={handleSubmit}>
+            Đăng
+          </button>
         </div>
       </form>
     </Overlay>
